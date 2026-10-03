@@ -1077,7 +1077,7 @@
         3. Push/commit the files to its main branch.
         4. Refresh the Grand Learning Publication website.
 
-      The new repository will appear automatically.
+      The new repository will appear automatically, and its Blog card will open the live GitHub Pages project.
 
       The website repository itself is excluded from the Blog.
     */
@@ -1267,6 +1267,9 @@
           sortDate: repo.updated_at || "",
           read: indexData?.source ? readingTime(stripHtml(indexData.source)) : "Project",
           repoUrl: repo.html_url,
+          // GitHub Pages project URL:
+          // https://grand-learning-publication.github.io/<repository-name>/
+          pagesUrl: `https://${GITHUB_OWNER}.github.io/${encodeURIComponent(repo.name)}/`,
           homepage: repo.homepage || "",
           sourceUrl: repo.html_url,
           image: parsed.image || "",
@@ -1349,9 +1352,8 @@
           ? `<div class="card-top" style="background-image:linear-gradient(135deg,rgba(16,35,63,.82),rgba(16,35,63,.28)),url('${escapeHtml(article.image)}');background-size:cover;background-position:center;">`
           : `<div class="card-top ${article.className}">`;
 
-        const liveLink = article.homepage
-          ? `<a class="read" href="${escapeHtml(article.homepage)}" target="_blank" rel="noopener">Open project <span>↗</span></a>`
-          : `<a class="read" href="${escapeHtml(article.repoUrl)}" target="_blank" rel="noopener">View repository <span>↗</span></a>`;
+        const liveUrl = article.pagesUrl || article.homepage || article.repoUrl;
+        const liveLink = `<a class="read" href="${escapeHtml(liveUrl)}" target="_blank" rel="noopener">Open project <span>↗</span></a>`;
 
         card.innerHTML = `
           ${visual}
@@ -1385,12 +1387,13 @@
 
       modalTitle.textContent = article.title;
 
-      const projectButton = article.homepage
-        ? `<a class="btn btn-primary" href="${escapeHtml(article.homepage)}" target="_blank" rel="noopener">Open Live Project ↗</a>`
-        : "";
+      const projectUrl = article.pagesUrl || article.homepage || article.repoUrl;
+
+      const projectButton =
+        `<a class="btn btn-primary" href="${escapeHtml(projectUrl)}" target="_blank" rel="noopener">Open Live Project ↗</a>`;
 
       const repoButton =
-        `<a class="btn btn-secondary" href="${escapeHtml(article.repoUrl)}" target="_blank" rel="noopener">Open GitHub Repository ↗</a>`;
+        `<a class="btn btn-secondary" href="${escapeHtml(article.repoUrl)}" target="_blank" rel="noopener">Source Repository ↗</a>`;
 
       let projectText = escapeHtml(article.description);
 
