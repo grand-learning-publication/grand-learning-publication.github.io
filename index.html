@@ -691,6 +691,12 @@
     .modal-content p{margin:0 0 15px}
 
 
+
+    .modal-content .btn{
+      display:inline-flex;
+      text-decoration:none;
+    }
+
     .modal-content img{
       max-width:100%;
       height:auto;
@@ -930,7 +936,7 @@
             <div class="eyebrow">Latest Learning</div>
             <h2>Featured Articles</h2>
           </div>
-          <p>Use the search box or topic filters to find an article quickly.</p>
+          <p>Search your published GitHub projects or filter them by subject.</p>
         </div>
 
         <div class="toolbar">
@@ -1054,44 +1060,34 @@
 
   <script>
     /*
-      GRAND LEARNING PUBLICATION — DYNAMIC GITHUB BLOG
+      GRAND LEARNING PUBLICATION — DYNAMIC REPOSITORY BLOG
 
-      Put your blog files inside:
-        /posts/
+      Your publication website is one repository:
+        grand-learning-publication.github.io
 
-      Supported:
-        /posts/*.md
-        /posts/*.markdown
-        /posts/*.html
-        /posts/ (including subfolders)/*.md
-        /posts/ (including subfolders)/*.html
+      Your learning projects can be separate repositories, for example:
+        Earth-s-Annual-Orbit-Animation-with-an-Infinite-Calendar
 
-      Markdown front matter example:
+      The Blog section below reads PUBLIC repositories owned by the account below.
+      You do NOT need a /posts/ folder.
 
-      ---
-      title: Understanding the Geological Time Scale
-      date: 2026-10-03
-      category: Geology
-      excerpt: A structured introduction to deep time.
-      image: /assets/images/geology.jpg
-      ---
+      To publish another blog/project:
+        1. Create another public GitHub repository.
+        2. Put the project/article in that repository.
+        3. Push/commit the files to its main branch.
+        4. Refresh the Grand Learning Publication website.
 
-      The article content starts here.
+      The new repository will appear automatically.
 
-      You can change BLOG_ROOT to "_posts" if your repository already uses Jekyll's _posts folder.
+      The website repository itself is excluded from the Blog.
     */
 
     const GITHUB_OWNER = "grand-learning-publication";
-    const GITHUB_REPO = "grand-learning-publication.github.io";
-    const GITHUB_BRANCH = "main";
-
-    // The blog can live in ANY folder of this repository.
-    // Examples: /posts/, /blog/, /articles/, /content/, /_posts/
-    // The loader scans the complete repository tree automatically.
+    const WEBSITE_REPO = "grand-learning-publication.github.io";
+    const GITHUB_API = "https://api.github.com";
 
     let articles = [];
     let activeFilter = "All";
-    let currentPath = "";
 
     const categoryClasses = {
       "History": "civilization",
@@ -1102,19 +1098,10 @@
       "Mathematics": "civilization",
       "Civilization": "civilization",
       "Science": "sky",
-      "Timelines": "earth"
+      "Interactive": "sky",
+      "Education": "civilization",
+      "Learning Project": "civilization"
     };
-
-    function githubApi(path) {
-      return `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(GITHUB_BRANCH)}`;
-    }
-
-    function rawGithubUrl(path) {
-      return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${encodeURIComponent(GITHUB_BRANCH)}/${path
-        .split("/")
-        .map(encodeURIComponent)
-        .join("/")}`;
-    }
 
     function escapeHtml(value = "") {
       return String(value)
@@ -1125,350 +1112,169 @@
         .replace(/'/g, "&#039;");
     }
 
-    function stripMarkdown(value = "") {
-      return value
-        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-        .replace(/[*_~`>#-]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
+    function repoApiUrl(repoName) {
+      return `${GITHUB_API}/repos/${GITHUB_OWNER}/${encodeURIComponent(repoName)}`;
     }
 
-    function markdownToHtml(markdown, filePath) {
-      let source = markdown.replace(/\r\n/g, "\n");
-
-      // Remove YAML front matter from the displayed content.
-      if (source.startsWith("---")) {
-        const closeIndex = source.indexOf("\n---", 3);
-        if (closeIndex !== -1) {
-          source = source.slice(closeIndex + 4).trim();
-        }
-      }
-
-      // Resolve simple relative image links against the article file.
-      const folder = filePath.includes("/")
-        ? filePath.slice(0, filePath.lastIndexOf("/") + 1)
-        : "";
-
-      const imageUrl = src => {
-        if (/^(https?:|data:|\/)/i.test(src)) return src;
-        return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${folder}${src}`
-          .split(" ").join("%20");
-      };
-
-      const lines = source.split("\n");
-      let output = "";
-      let inList = false;
-      let inCode = false;
-      let codeBuffer = [];
-
-      function closeList() {
-        if (inList) {
-          output += "</ul>";
-          inList = false;
-        }
-      }
-
-      for (let line of lines) {
-        if (line.trim().startsWith("```")) {
-          closeList();
-          if (inCode) {
-            output += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`;
-            codeBuffer = [];
-            inCode = false;
-          } else {
-            inCode = true;
-          }
-          continue;
-        }
-
-        if (inCode) {
-          codeBuffer.push(line);
-          continue;
-        }
-
-        if (!line.trim()) {
-          closeList();
-          continue;
-        }
-
-        const trimmed = line.trim();
-
-        if (/^#{1,4}\s/.test(trimmed)) {
-          closeList();
-          const level = trimmed.match(/^#+/)[0].length;
-          const text = trimmed.replace(/^#+\s*/, "");
-          output += `<h4>${inlineMarkdown(text, imageUrl)}</h4>`;
-          continue;
-        }
-
-        if (/^[-*]\s+/.test(trimmed)) {
-          if (!inList) {
-            output += "<ul>";
-            inList = true;
-          }
-          output += `<li>${inlineMarkdown(trimmed.replace(/^[-*]\s+/, ""), imageUrl)}</li>`;
-          continue;
-        }
-
-        if (/^\d+\.\s+/.test(trimmed)) {
-          if (!inList) {
-            output += "<ol>";
-            inList = true;
-          }
-          output += `<li>${inlineMarkdown(trimmed.replace(/^\d+\.\s+/, ""), imageUrl)}</li>`;
-          continue;
-        }
-
-        closeList();
-
-        if (/^>\s?/.test(trimmed)) {
-          output += `<blockquote>${inlineMarkdown(trimmed.replace(/^>\s?/, ""), imageUrl)}</blockquote>`;
-          continue;
-        }
-
-        if (/^!\[.*\]\(.*\)$/.test(trimmed)) {
-          const match = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/);
-          if (match) {
-            output += `<img src="${escapeHtml(imageUrl(match[2]))}" alt="${escapeHtml(match[1])}" loading="lazy" style="border-radius:14px;margin:18px 0;width:100%;">`;
-            continue;
-          }
-        }
-
-        output += `<p>${inlineMarkdown(trimmed, imageUrl)}</p>`;
-      }
-
-      closeList();
-      return output;
+    function repoContentsUrl(repoName, fileName = "index.html") {
+      return `${GITHUB_API}/repos/${GITHUB_OWNER}/${encodeURIComponent(repoName)}/contents/${encodeURIComponent(fileName)}`;
     }
 
-    function inlineMarkdown(text, resolveImage) {
-      let out = escapeHtml(text);
-
-      // Restore common inline markdown after escaping.
-      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) =>
-        `<img src="${escapeHtml(resolveImage(src))}" alt="${escapeHtml(alt)}" loading="lazy" style="max-height:420px;border-radius:12px;margin:12px 0;">`
-      );
-      out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-      out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-      out = out.replace(/__(.+?)__/g, "<strong>$1</strong>");
-      out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
-      out = out.replace(/_(.+?)_/g, "<em>$1</em>");
-      out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-      return out;
+    function repoRawUrl(repoName, fileName = "index.html", branch = "main") {
+      return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${encodeURIComponent(repoName)}/${encodeURIComponent(branch)}/${encodeURIComponent(fileName)}`;
     }
 
-    function parseFrontMatter(source) {
-      const result = {};
-
-      if (!source.trimStart().startsWith("---")) {
-        return { data: result, body: source };
-      }
-
-      const normalized = source.replace(/\r\n/g, "\n");
-      const match = normalized.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-
-      if (!match) {
-        return { data: result, body: source };
-      }
-
-      match[1].split("\n").forEach(line => {
-        const colon = line.indexOf(":");
-        if (colon === -1) return;
-
-        const key = line.slice(0, colon).trim().toLowerCase();
-        let value = line.slice(colon + 1).trim();
-
-        if (
-          (value.startsWith('"') && value.endsWith('"')) ||
-          (value.startsWith("'") && value.endsWith("'"))
-        ) {
-          value = value.slice(1, -1);
-        }
-
-        result[key] = value;
-      });
-
-      return { data: result, body: match[2] };
-    }
-
-    function parseHtmlArticle(source) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(source, "text/html");
-
-      const title =
-        doc.querySelector('meta[name="title"]')?.content ||
-        doc.querySelector("title")?.textContent ||
-        "";
-
-      const description =
-        doc.querySelector('meta[name="description"]')?.content ||
-        doc.querySelector('meta[property="og:description"]')?.content ||
-        "";
-
-      const category = doc.querySelector('meta[name="category"]')?.content || "";
-      const date = doc.querySelector('meta[name="date"]')?.content || "";
-
-      const article =
-        doc.querySelector("article") ||
-        doc.querySelector("main") ||
-        doc.body;
-
-      return {
-        title: title.trim(),
-        excerpt: description.trim(),
-        category: category.trim(),
-        date: date.trim(),
-        body: article?.innerHTML || source
-      };
-    }
-
-    function guessTitle(path) {
-      const file = path.split("/").pop().replace(/\.(md|markdown|html?)$/i, "");
-      return file
-        .replace(/^\d{4}-\d{2}-\d{2}-?/, "")
+    function humanizeRepoName(name = "") {
+      return name
         .replace(/[-_]+/g, " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
+        .replace(/\s+/g, " ")
+        .trim()
+        .replace(/\b\w/g, letter => letter.toUpperCase());
     }
 
-    function guessCategory(path, data) {
-      if (data.category) return data.category;
-      const parts = path.split("/");
-      return parts.length > 2 ? parts[1].replace(/[-_]+/g, " ") : "General";
+    function detectCategory(repo) {
+      const topics = Array.isArray(repo.topics) ? repo.topics : [];
+      const combined = `${repo.name} ${repo.description || ""} ${topics.join(" ")}`.toLowerCase();
+
+      if (/astronom|orbit|planet|solar|calendar|kepler|copernicus|space|earth/.test(combined)) return "Astronomy";
+      if (/archaeolog|prehistor|paleolith|neolith|bronze age|iron age|metal|copper/.test(combined)) return "Archaeology";
+      if (/human evolution|hominin|homo sapiens|neanderthal|denisovan/.test(combined)) return "Human Evolution";
+      if (/geolog|earth history|hadean|archean|proterozoic|pleistocene|miocene|pliocene/.test(combined)) return "Geology";
+      if (/mathemat|number system|geometry|fraction|zero|calculation/.test(combined)) return "Mathematics";
+      if (/history|civilization|ancient|writing|calendar/.test(combined)) return "History";
+      if (/science|physics|chemistry|biology/.test(combined)) return "Science";
+      return "Learning Project";
     }
 
-    function formatDate(value, fallback = "") {
-      if (!value) return fallback || "Publication";
+    function formatDate(value) {
+      if (!value) return "Publication";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Publication";
 
-      const d = new Date(value);
-      if (Number.isNaN(d.getTime())) return value;
-
-      return d.toLocaleDateString("en-US", {
+      return date.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric"
       });
     }
 
-    function readingTime(text) {
-      const words = stripMarkdown(text).split(/\s+/).filter(Boolean).length;
+    function readingTime(text = "") {
+      const words = text.replace(/\s+/g, " ").trim().split(" ").filter(Boolean).length;
       return `${Math.max(1, Math.ceil(words / 180))} min read`;
     }
 
-    function normalizeArticle(item, content, filePath) {
-      const ext = filePath.split(".").pop().toLowerCase();
-      const parsed = ext === "html" || ext === "htm"
-        ? parseHtmlArticle(content)
-        : (() => {
-            const parsedMd = parseFrontMatter(content);
-            return {
-              title: parsedMd.data.title || "",
-              excerpt: parsedMd.data.excerpt || parsedMd.data.description || "",
-              category: parsedMd.data.category || "",
-              date: parsedMd.data.date || "",
-              image: parsedMd.data.image || "",
-              body: markdownToHtml(content, filePath),
-              rawBody: parsedMd.body
-            };
-          })();
-
-      const title = parsed.title || guessTitle(filePath);
-      const excerpt = parsed.excerpt ||
-        stripMarkdown(parsed.rawBody || parsed.body || "").slice(0, 170) + "…";
-
-      const category = guessCategory(filePath, parsed);
-      const image = parsed.image || "";
+    function extractHtmlMeta(source = "") {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(source, "text/html");
 
       return {
-        id: filePath,
-        path: filePath,
-        category,
-        className: categoryClasses[category] || "civilization",
-        number: "",
-        date: formatDate(parsed.date),
-        sortDate: parsed.date || "0000-00-00",
-        read: readingTime(parsed.rawBody || parsed.body || ""),
-        title,
-        excerpt,
-        image,
-        content: ext === "html" || ext === "htm"
-          ? parsed.body
-          : parsed.body
+        title:
+          doc.querySelector("meta[name='title']")?.content ||
+          doc.querySelector("meta[property='og:title']")?.content ||
+          doc.querySelector("title")?.textContent ||
+          "",
+        description:
+          doc.querySelector("meta[name='description']")?.content ||
+          doc.querySelector("meta[property='og:description']")?.content ||
+          "",
+        category:
+          doc.querySelector("meta[name='category']")?.content || "",
+        image:
+          doc.querySelector("meta[property='og:image']")?.content ||
+          "",
+        body:
+          doc.querySelector("article")?.innerHTML ||
+          doc.querySelector("main")?.innerHTML ||
+          ""
       };
     }
 
-    async function listBlogFiles() {
-      const url =
-        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/` +
-        `${encodeURIComponent(GITHUB_BRANCH)}?recursive=1`;
-
-      const response = await fetch(url, {
-        headers: { "Accept": "application/vnd.github+json" }
-      });
-
-      if (!response.ok) {
-        throw new Error(`GitHub tree request failed with HTTP ${response.status}`);
-      }
-
-      const tree = await response.json();
-
-      if (!Array.isArray(tree.tree)) {
-        throw new Error("GitHub returned an unexpected repository tree.");
-      }
-
-      const allowed = /\.(md|markdown|html?|HTML?)$/i;
-
-      return tree.tree
-        .filter(entry => entry.type === "blob" && allowed.test(entry.path))
-        .map(entry => entry.path)
-        .filter(filePath => {
-          const normalized = filePath.toLowerCase();
-
-          // Do not treat the home page as a blog article.
-          if (normalized === "index.html") return false;
-
-          // Ignore common technical files/directories.
-          if (
-            normalized.includes("/node_modules/") ||
-            normalized.includes("/.github/") ||
-            normalized.includes("/assets/") ||
-            normalized.includes("/css/") ||
-            normalized.includes("/js/") ||
-            normalized.includes("/scripts/")
-          ) return false;
-
-          return true;
-        });
+    function stripHtml(source = "") {
+      const doc = new DOMParser().parseFromString(source, "text/html");
+      return (doc.body?.textContent || "").replace(/\s+/g, " ").trim();
     }
 
-    async function loadBlogArticles() {
-      const files = await listBlogFiles();
-      const loaded = [];
+    async function getRepoIndex(repoName, branch = "main") {
+      try {
+        const response = await fetch(repoRawUrl(repoName, "index.html", branch), {
+          cache: "no-store"
+        });
 
-      for (const filePath of files) {
-        try {
-          const response = await fetch(rawGithubUrl(filePath), {
-            cache: "no-store"
-          });
+        if (!response.ok) return null;
 
-          if (!response.ok) continue;
+        const source = await response.text();
+        const meta = extractHtmlMeta(source);
 
-          const content = await response.text();
+        return {
+          source,
+          meta
+        };
+      } catch (error) {
+        console.warn("Could not read repository index:", repoName, error);
+        return null;
+      }
+    }
 
-          loaded.push(
-            normalizeArticle({ path: filePath }, content, filePath)
-          );
-        } catch (error) {
-          console.warn("Could not load article:", filePath, error);
+    async function loadRepositoryArticles() {
+      const response = await fetch(
+        `${GITHUB_API}/users/${encodeURIComponent(GITHUB_OWNER)}/repos?per_page=100&sort=updated`,
+        {
+          headers: {
+            "Accept": "application/vnd.github+json"
+          },
+          cache: "no-store"
         }
+      );
+
+      if (!response.ok) {
+        throw new Error(`GitHub repository request failed with HTTP ${response.status}`);
       }
 
-      loaded.sort((a, b) => {
-        const dateCompare = String(b.sortDate).localeCompare(String(a.sortDate));
-        if (dateCompare !== 0) return dateCompare;
-        return a.title.localeCompare(b.title);
-      });
+      const repos = await response.json();
+
+      const publicRepos = repos.filter(repo =>
+        !repo.private &&
+        repo.name !== WEBSITE_REPO &&
+        !repo.fork &&
+        !repo.archived
+      );
+
+      const loaded = [];
+
+      for (const repo of publicRepos) {
+        const indexData = await getRepoIndex(repo.name, repo.default_branch || "main");
+        const parsed = indexData?.meta || {};
+
+        const title = parsed.title.trim() || humanizeRepoName(repo.name);
+        const description =
+          parsed.description.trim() ||
+          repo.description?.trim() ||
+          "Educational project published by Grand Learning Publication.";
+
+        const category =
+          parsed.category.trim() ||
+          detectCategory(repo);
+
+        loaded.push({
+          id: repo.full_name,
+          repoName: repo.name,
+          owner: repo.owner?.login || GITHUB_OWNER,
+          title,
+          category,
+          className: categoryClasses[category] || "civilization",
+          description,
+          date: formatDate(repo.updated_at),
+          sortDate: repo.updated_at || "",
+          read: indexData?.source ? readingTime(stripHtml(indexData.source)) : "Project",
+          repoUrl: repo.html_url,
+          homepage: repo.homepage || "",
+          sourceUrl: repo.html_url,
+          image: parsed.image || "",
+          hasIndex: Boolean(indexData?.source)
+        });
+      }
+
+      loaded.sort((a, b) => String(b.sortDate).localeCompare(String(a.sortDate)));
 
       loaded.forEach((article, index) => {
         article.number = String(index + 1).padStart(2, "0");
@@ -1499,12 +1305,14 @@
       const query = searchInput.value.trim().toLowerCase();
 
       const filtered = articles.filter(article => {
-        const matchesFilter = activeFilter === "All" || article.category === activeFilter;
+        const matchesFilter =
+          activeFilter === "All" || article.category === activeFilter;
+
         const searchable = [
           article.title,
           article.category,
-          article.excerpt,
-          article.content
+          article.description,
+          article.repoName
         ].join(" ").toLowerCase();
 
         return matchesFilter && searchable.includes(query);
@@ -1515,8 +1323,9 @@
       if (!articles.length) {
         postsEl.innerHTML = `
           <div class="empty" style="display:block">
-            <strong>No blog articles were found.</strong><br />
-            Add a committed Markdown or HTML article anywhere in this GitHub repository, then refresh the page.
+            <strong>No publication projects found.</strong><br />
+            Create a public GitHub repository under <code>${escapeHtml(GITHUB_OWNER)}</code>
+            and it will appear here automatically.
           </div>
         `;
         return;
@@ -1525,8 +1334,8 @@
       if (!filtered.length) {
         postsEl.innerHTML = `
           <div class="empty" style="display:block">
-            <strong>No articles found.</strong><br />
-            Try another search term or choose a different topic.
+            <strong>No articles or projects found.</strong><br />
+            Try another search term or topic.
           </div>
         `;
         return;
@@ -1537,8 +1346,12 @@
         card.className = "card";
 
         const visual = article.image
-          ? `<div class="card-top" style="background-image:linear-gradient(135deg,rgba(16,35,63,.72),rgba(16,35,63,.25)),url('${escapeHtml(article.image)}');background-size:cover;background-position:center;">`
+          ? `<div class="card-top" style="background-image:linear-gradient(135deg,rgba(16,35,63,.82),rgba(16,35,63,.28)),url('${escapeHtml(article.image)}');background-size:cover;background-position:center;">`
           : `<div class="card-top ${article.className}">`;
+
+        const liveLink = article.homepage
+          ? `<a class="read" href="${escapeHtml(article.homepage)}" target="_blank" rel="noopener">Open project <span>↗</span></a>`
+          : `<a class="read" href="${escapeHtml(article.repoUrl)}" target="_blank" rel="noopener">View repository <span>↗</span></a>`;
 
         card.innerHTML = `
           ${visual}
@@ -1547,31 +1360,68 @@
           </div>
           <div class="card-body">
             <div class="meta">
-              <span>${escapeHtml(article.date)}</span><span>•</span><span>${escapeHtml(article.read)}</span>
+              <span>${escapeHtml(article.date)}</span>
+              <span>•</span>
+              <span>${escapeHtml(article.read)}</span>
             </div>
             <h3>${escapeHtml(article.title)}</h3>
-            <p>${escapeHtml(article.excerpt)}</p>
-            <button class="read" data-id="${encodeURIComponent(article.id)}" style="border:0;background:none;padding:0;cursor:pointer;">
-              Read article <span>↗</span>
-            </button>
+            <p>${escapeHtml(article.description)}</p>
+            ${liveLink}
           </div>
         `;
 
         postsEl.appendChild(card);
       });
-
-      postsEl.querySelectorAll(".read").forEach(btn => {
-        btn.addEventListener("click", () => openArticle(decodeURIComponent(btn.dataset.id)));
-      });
     }
 
-    function openArticle(id) {
+    async function openArticle(id) {
       const article = articles.find(item => item.id === id);
       if (!article) return;
 
-      modalMeta.innerHTML = `<span>${escapeHtml(article.category)}</span><span>•</span><span>${escapeHtml(article.date)}</span><span>•</span><span>${escapeHtml(article.read)}</span>`;
+      modalMeta.innerHTML =
+        `<span>${escapeHtml(article.category)}</span>` +
+        `<span>•</span>` +
+        `<span>${escapeHtml(article.date)}</span>`;
+
       modalTitle.textContent = article.title;
-      modalContent.innerHTML = article.content;
+
+      const projectButton = article.homepage
+        ? `<a class="btn btn-primary" href="${escapeHtml(article.homepage)}" target="_blank" rel="noopener">Open Live Project ↗</a>`
+        : "";
+
+      const repoButton =
+        `<a class="btn btn-secondary" href="${escapeHtml(article.repoUrl)}" target="_blank" rel="noopener">Open GitHub Repository ↗</a>`;
+
+      let projectText = escapeHtml(article.description);
+
+      // Read the repository index only for an informational preview.
+      // The project itself remains hosted in its own repository.
+      try {
+        const indexData = await getRepoIndex(article.repoName);
+        if (indexData?.source) {
+          const plain = stripHtml(indexData.source);
+          if (plain) {
+            projectText = escapeHtml(plain.slice(0, 1200));
+          }
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+
+      modalContent.innerHTML = `
+        <p>${projectText}</p>
+        <p style="margin:22px 0;display:flex;flex-wrap:wrap;gap:10px;">
+          ${projectButton}
+          ${repoButton}
+        </p>
+        <h4>Published Project</h4>
+        <p>
+          This learning resource is stored in its own public GitHub repository.
+          Grand Learning Publication lists it here automatically, so new project
+          repositories can be added without editing this website.
+        </p>
+      `;
+
       modal.classList.add("open");
       document.body.style.overflow = "hidden";
     }
@@ -1594,10 +1444,12 @@
     searchInput.addEventListener("input", renderPosts);
 
     function renderFilters() {
-      const categories = [...new Set(articles.map(article => article.category).filter(Boolean))]
-        .sort((a, b) => a.localeCompare(b));
+      const categories = [...new Set(
+        articles.map(article => article.category).filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b));
 
-      filtersEl.innerHTML = `<button class="filter ${activeFilter === "All" ? "active" : ""}" data-filter="All">All</button>`;
+      filtersEl.innerHTML =
+        `<button class="filter ${activeFilter === "All" ? "active" : ""}" data-filter="All">All</button>`;
 
       categories.forEach(category => {
         const button = document.createElement("button");
@@ -1619,6 +1471,9 @@
     document.querySelectorAll("[data-topic]").forEach(topic => {
       topic.addEventListener("click", () => {
         activeFilter = topic.dataset.topic;
+        if (!articles.some(article => article.category === activeFilter)) {
+          activeFilter = "All";
+        }
         renderFilters();
         renderPosts();
       });
@@ -1654,13 +1509,14 @@
     document.getElementById("year").textContent = new Date().getFullYear();
 
     async function initDynamicBlog() {
-      showBlogStatus("Loading articles from GitHub…");
+      showBlogStatus("Loading Grand Learning Publication projects from GitHub…");
 
       try {
-        await loadBlogArticles();
+        await loadRepositoryArticles();
+
         showBlogStatus(
           articles.length
-            ? `${articles.length} article${articles.length === 1 ? "" : "s"} loaded from this GitHub repository`
+            ? `${articles.length} publication project${articles.length === 1 ? "" : "s"} loaded automatically from GitHub`
             : ""
         );
 
@@ -1669,9 +1525,11 @@
       } catch (error) {
         console.error(error);
         articles = [];
+        renderFilters();
         renderPosts();
+
         showBlogStatus(
-          `The blog could not be loaded from GitHub. Check that this repository is public and that the article files are committed to the ${GITHUB_BRANCH} branch.`,
+          "The GitHub projects could not be loaded. Make sure the repositories are public and the GitHub account name is correct.",
           "error"
         );
       }
