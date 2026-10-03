@@ -517,37 +517,7 @@
       font-size:14px;
       margin:0;
     }
-
-    .recent{
-      display:grid;
-      gap:12px;
-    }
-
-    .recent a{
-      padding-bottom:12px;
-      border-bottom:1px solid var(--line);
-    }
-
-    .recent a:last-child{
-      border-bottom:0;
-      padding-bottom:0;
-    }
-
-    .recent strong{
-      display:block;
-      color:var(--navy);
-      line-height:1.3;
-      font-size:15px;
-    }
-
-    .recent span{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-      font:11px Arial,sans-serif;
-    }
-
-    .newsletter{
+.newsletter{
       background:var(--navy);
       color:white;
       border-radius:18px;
@@ -970,12 +940,6 @@
           </div>
           <div class="filters" id="filters">
             <button class="filter active" data-filter="All">All</button>
-            <button class="filter" data-filter="History">History</button>
-            <button class="filter" data-filter="Archaeology">Archaeology</button>
-            <button class="filter" data-filter="Human Evolution">Human Evolution</button>
-            <button class="filter" data-filter="Geology">Geology</button>
-            <button class="filter" data-filter="Astronomy">Astronomy</button>
-            <button class="filter" data-filter="Mathematics">Mathematics</button>
           </div>
         </div>
 
@@ -992,18 +956,7 @@
                 textbook-inspired style, helping readers connect facts, dates, ideas and discoveries.
               </p>
             </div>
-
-            <div class="side-card">
-              <h3>Recent Reading</h3>
-              <div class="recent">
-                <a href="#blog"><strong>Understanding the Geological Time Scale</strong><span>Geology · Reference</span></a>
-                <a href="#blog"><strong>How Heliocentrism Changed Astronomy</strong><span>Astronomy · Science</span></a>
-                <a href="#blog"><strong>From Stone to Metal</strong><span>Archaeology · Technology</span></a>
-                <a href="#blog"><strong>The Development of Writing</strong><span>Civilization · History</span></a>
-              </div>
-            </div>
-
-            <div class="newsletter">
+<div class="newsletter">
               <h3>Publication Notes</h3>
               <p>Use this space for your newsletter, new-article announcements or publication updates.</p>
               <form id="newsletterForm">
@@ -1131,7 +1084,10 @@
     const GITHUB_OWNER = "grand-learning-publication";
     const GITHUB_REPO = "grand-learning-publication.github.io";
     const GITHUB_BRANCH = "main";
-    const BLOG_ROOT = "posts";
+
+    // The blog can live in ANY folder of this repository.
+    // Examples: /posts/, /blog/, /articles/, /content/, /_posts/
+    // The loader scans the complete repository tree automatically.
 
     let articles = [];
     let activeFilter = "All";
@@ -1442,31 +1398,48 @@
       };
     }
 
-    async function listBlogFiles(path = BLOG_ROOT) {
-      const response = await fetch(githubApi(path), {
+    async function listBlogFiles() {
+      const url =
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/` +
+        `${encodeURIComponent(GITHUB_BRANCH)}?recursive=1`;
+
+      const response = await fetch(url, {
         headers: { "Accept": "application/vnd.github+json" }
       });
 
       if (!response.ok) {
-        throw new Error(`GitHub returned ${response.status} while reading ${path}`);
+        throw new Error(`GitHub tree request failed with HTTP ${response.status}`);
       }
 
-      const entries = await response.json();
-      const files = [];
+      const tree = await response.json();
 
-      for (const entry of entries) {
-        if (entry.type === "dir") {
-          const nested = await listBlogFiles(entry.path);
-          files.push(...nested);
-        } else if (
-          entry.type === "file" &&
-          /\.(md|markdown|html?|HTML?)$/i.test(entry.name)
-        ) {
-          files.push(entry.path);
-        }
+      if (!Array.isArray(tree.tree)) {
+        throw new Error("GitHub returned an unexpected repository tree.");
       }
 
-      return files;
+      const allowed = /\.(md|markdown|html?|HTML?)$/i;
+
+      return tree.tree
+        .filter(entry => entry.type === "blob" && allowed.test(entry.path))
+        .map(entry => entry.path)
+        .filter(filePath => {
+          const normalized = filePath.toLowerCase();
+
+          // Do not treat the home page as a blog article.
+          if (normalized === "index.html") return false;
+
+          // Ignore common technical files/directories.
+          if (
+            normalized.includes("/node_modules/") ||
+            normalized.includes("/.github/") ||
+            normalized.includes("/assets/") ||
+            normalized.includes("/css/") ||
+            normalized.includes("/js/") ||
+            normalized.includes("/scripts/")
+          ) return false;
+
+          return true;
+        });
     }
 
     async function loadBlogArticles() {
@@ -1475,21 +1448,27 @@
 
       for (const filePath of files) {
         try {
-          const response = await fetch(rawGithubUrl(filePath));
+          const response = await fetch(rawGithubUrl(filePath), {
+            cache: "no-store"
+          });
+
           if (!response.ok) continue;
 
           const content = await response.text();
-          loaded.push(normalizeArticle(
-            { path: filePath },
-            content,
-            filePath
-          ));
+
+          loaded.push(
+            normalizeArticle({ path: filePath }, content, filePath)
+          );
         } catch (error) {
           console.warn("Could not load article:", filePath, error);
         }
       }
 
-      loaded.sort((a, b) => String(b.sortDate).localeCompare(String(a.sortDate)));
+      loaded.sort((a, b) => {
+        const dateCompare = String(b.sortDate).localeCompare(String(a.sortDate));
+        if (dateCompare !== 0) return dateCompare;
+        return a.title.localeCompare(b.title);
+      });
 
       loaded.forEach((article, index) => {
         article.number = String(index + 1).padStart(2, "0");
@@ -1510,7 +1489,7 @@
 
     const postsEl = document.getElementById("posts");
     const searchInput = document.getElementById("searchInput");
-    const filterButtons = document.querySelectorAll(".filter");
+    const filtersEl = document.getElementById("filters");
     const modal = document.getElementById("articleModal");
     const modalTitle = document.getElementById("modalTitle");
     const modalMeta = document.getElementById("modalMeta");
@@ -1537,7 +1516,7 @@
         postsEl.innerHTML = `
           <div class="empty" style="display:block">
             <strong>No blog articles were found.</strong><br />
-            Upload Markdown or HTML articles into <code>/posts/</code> in your GitHub repository.
+            Add a committed Markdown or HTML article anywhere in this GitHub repository, then refresh the page.
           </div>
         `;
         return;
@@ -1614,18 +1593,33 @@
 
     searchInput.addEventListener("input", renderPosts);
 
-    filterButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        activeFilter = button.dataset.filter;
-        filterButtons.forEach(b => b.classList.toggle("active", b === button));
-        renderPosts();
+    function renderFilters() {
+      const categories = [...new Set(articles.map(article => article.category).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b));
+
+      filtersEl.innerHTML = `<button class="filter ${activeFilter === "All" ? "active" : ""}" data-filter="All">All</button>`;
+
+      categories.forEach(category => {
+        const button = document.createElement("button");
+        button.className = `filter ${activeFilter === category ? "active" : ""}`;
+        button.dataset.filter = category;
+        button.textContent = category;
+        filtersEl.appendChild(button);
       });
-    });
+
+      filtersEl.querySelectorAll(".filter").forEach(button => {
+        button.addEventListener("click", () => {
+          activeFilter = button.dataset.filter;
+          renderFilters();
+          renderPosts();
+        });
+      });
+    }
 
     document.querySelectorAll("[data-topic]").forEach(topic => {
       topic.addEventListener("click", () => {
         activeFilter = topic.dataset.topic;
-        filterButtons.forEach(b => b.classList.toggle("active", b.dataset.filter === activeFilter));
+        renderFilters();
         renderPosts();
       });
     });
@@ -1666,17 +1660,18 @@
         await loadBlogArticles();
         showBlogStatus(
           articles.length
-            ? `${articles.length} article${articles.length === 1 ? "" : "s"} loaded from /${BLOG_ROOT}/`
+            ? `${articles.length} article${articles.length === 1 ? "" : "s"} loaded from this GitHub repository`
             : ""
         );
 
+        renderFilters();
         renderPosts();
       } catch (error) {
         console.error(error);
         articles = [];
         renderPosts();
         showBlogStatus(
-          `The blog could not be loaded from GitHub. Check that /${BLOG_ROOT}/ exists and that the repository is public.`,
+          `The blog could not be loaded from GitHub. Check that this repository is public and that the article files are committed to the ${GITHUB_BRANCH} branch.`,
           "error"
         );
       }
