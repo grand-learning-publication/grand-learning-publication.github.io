@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Grand Learning Publication — educational articles, timelines, history, archaeology, geology, astronomy, mathematics and science." />
+  <meta name="theme-color" content="#10233f" />
+  <title>Grand Learning Publication | Knowledge • History • Science</title>
+
+  <style>
+    :root{
+      --navy:#10233f;
+      --navy-2:#18365e;
+      --gold:#d6a84b;
+      --cream:#f7f3ea;
+      --paper:#fffdf8;
+      --ink:#1e2937;
+      --muted:#687486;
+      --line:#e6e0d3;
+      --white:#ffffff;
+      --shadow:0 14px 35px rgba(16,35,63,.10);
+      --radius:18px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:var(--cream);
+      font-family:Georgia, "Times New Roman", serif;
+      line-height:1.65;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .topbar{
+      background:var(--navy);
+      color:#dfe9f5;
+      font:600 13px/1.4 Arial, sans-serif;
+      letter-spacing:.04em;
+    }
+
+    .container{
+      width:min(var(--max), calc(100% - 36px));
+      margin:auto;
+    }
+
+    .topbar-inner{
+      min-height:38px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,253,248,.96);
+      border-bottom:1px solid var(--line);
+      backdrop-filter:blur(10px);
+    }
+
+    .nav{
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:28px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .brand-mark{
+      width:44px;
+      height:44px;
+      flex:0 0 44px;
+      display:grid;
+      place-items:center;
+      border:2px solid var(--gold);
+      color:var(--gold);
+      border-radius:12px;
+      font:700 17px Arial,sans-serif;
+    }
+
+    .brand-text{
+      min-width:0;
+    }
+
+    .brand-title{
+      margin:0;
+      color:var(--navy);
+      font-size:20px;
+      line-height:1.1;
+      font-weight:700;
+    }
+
+    .brand-subtitle{
+      margin:4px 0 0;
+      color:var(--muted);
+      font:600 11px/1.2 Arial,sans-serif;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+    }
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:24px;
+      font:700 14px/1 Arial,sans-serif;
+    }
+
+    .nav-links a{
+      padding:11px 2px;
+      color:var(--navy);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active{color:#9b6d12}
+
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .icon-btn{
+      width:40px;
+      height:40px;
+      border:1px solid var(--line);
+      background:var(--white);
+      border-radius:12px;
+      cursor:pointer;
+      color:var(--navy);
+      font:700 16px Arial,sans-serif;
+    }
+
+    .menu-btn{display:none}
+
+    .hero{
+      padding:76px 0 56px;
+      background:
+        radial-gradient(circle at 80% 10%, rgba(214,168,75,.17), transparent 35%),
+        linear-gradient(135deg, #fffdf8 0%, #f3eee3 100%);
+      border-bottom:1px solid var(--line);
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:44px;
+      align-items:center;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:#8b6215;
+      font:800 12px/1 Arial,sans-serif;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin-bottom:18px;
+    }
+
+    .eyebrow::before{
+      content:"";
+      width:28px;
+      height:2px;
+      background:var(--gold);
+    }
+
+    h1{
+      margin:0;
+      max-width:780px;
+      color:var(--navy);
+      font-size:clamp(42px,6vw,72px);
+      line-height:.98;
+      letter-spacing:-.035em;
+    }
+
+    .hero p{
+      max-width:700px;
+      margin:24px 0 30px;
+      font-size:19px;
+      color:#536072;
+    }
+
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    .btn{
+      border:0;
+      border-radius:12px;
+      padding:13px 19px;
+      cursor:pointer;
+      font:800 14px Arial,sans-serif;
+      display:inline-flex;
+      justify-content:center;
+      align-items:center;
+      gap:8px;
+    }
+
+    .btn-primary{background:var(--navy);color:white}
+    .btn-primary:hover{background:var(--navy-2)}
+    .btn-secondary{background:white;color:var(--navy);border:1px solid var(--line)}
+
+    .hero-note{
+      background:var(--navy);
+      color:#fff;
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-note::after{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:50%;
+      right:-80px;
+      bottom:-80px;
+    }
+
+    .hero-note h2{
+      margin:0 0 14px;
+      font-size:25px;
+      line-height:1.2;
+    }
+
+    .hero-note p{
+      margin:0 0 22px;
+      color:#d7e1ee;
+      font-size:15px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+
+    .stat{
+      padding:13px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.11);
+      border-radius:12px;
+      text-align:center;
+    }
+
+    .stat strong{
+      display:block;
+      font:800 20px Arial,sans-serif;
+      color:#fff;
+    }
+
+    .stat span{
+      display:block;
+      margin-top:4px;
+      color:#b9c7d8;
+      font:600 10px Arial,sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    section{padding:64px 0}
+
+    .section-heading{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:20px;
+      margin-bottom:28px;
+    }
+
+    .section-heading h2{
+      color:var(--navy);
+      font-size:34px;
+      margin:0;
+      line-height:1.1;
+    }
+
+    .section-heading p{
+      max-width:560px;
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .topics{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:12px;
+    }
+
+    .topic{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:21px 16px;
+      transition:.2s ease;
+    }
+
+    .topic:hover{
+      transform:translateY(-3px);
+      box-shadow:var(--shadow);
+      border-color:#d9c28b;
+    }
+
+    .topic-icon{
+      font-size:25px;
+      margin-bottom:12px;
+    }
+
+    .topic h3{
+      margin:0 0 4px;
+      color:var(--navy);
+      font-size:18px;
+    }
+
+    .topic p{
+      margin:0;
+      color:var(--muted);
+      font:14px/1.5 Arial,sans-serif;
+    }
+
+    .blog-section{background:#f0ece3}
+
+    .toolbar{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-bottom:22px;
+    }
+
+    .search-box{
+      flex:1 1 300px;
+      position:relative;
+    }
+
+    .search-box input{
+      width:100%;
+      height:48px;
+      padding:0 16px 0 44px;
+      border:1px solid var(--line);
+      background:var(--white);
+      border-radius:12px;
+      outline:none;
+      color:var(--ink);
+      font:15px Arial,sans-serif;
+    }
+
+    .search-box span{
+      position:absolute;
+      left:15px;
+      top:12px;
+      font:18px Arial,sans-serif;
+      color:var(--muted);
+    }
+
+    .filters{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      padding-bottom:2px;
+    }
+
+    .filter{
+      white-space:nowrap;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--navy);
+      border-radius:999px;
+      padding:10px 14px;
+      cursor:pointer;
+      font:700 12px Arial,sans-serif;
+    }
+
+    .filter.active,
+    .filter:hover{
+      background:var(--navy);
+      color:white;
+      border-color:var(--navy);
+    }
+
+    .content-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 310px;
+      gap:24px;
+      align-items:start;
+    }
+
+    .posts{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:18px;
+    }
+
+    .card{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 5px 18px rgba(16,35,63,.04);
+      transition:.2s ease;
+    }
+
+    .card:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--shadow);
+    }
+
+    .card-top{
+      height:150px;
+      padding:20px;
+      color:#fff;
+      background:
+        linear-gradient(135deg, rgba(16,35,63,.98), rgba(40,67,103,.92)),
+        #10233f;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .card-top.earth{background:linear-gradient(135deg,#384c35,#7a7351)}
+    .card-top.copper{background:linear-gradient(135deg,#6e3c25,#b86f42)}
+    .card-top.sky{background:linear-gradient(135deg,#1f466b,#557ea0)}
+    .card-top.stone{background:linear-gradient(135deg,#3f4245,#777a7b)}
+    .card-top.civilization{background:linear-gradient(135deg,#574125,#998158)}
+
+    .badge{
+      align-self:flex-start;
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.10);
+      border-radius:999px;
+      padding:6px 10px;
+      font:800 10px Arial,sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+
+    .card-top .number{
+      font:800 34px Arial,sans-serif;
+      opacity:.85;
+    }
+
+    .card-body{padding:21px}
+
+    .meta{
+      display:flex;
+      gap:9px;
+      flex-wrap:wrap;
+      color:#8a94a1;
+      font:700 11px Arial,sans-serif;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .card h3{
+      margin:11px 0 9px;
+      color:var(--navy);
+      font-size:23px;
+      line-height:1.18;
+    }
+
+    .card p{
+      margin:0 0 17px;
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .read{
+      color:#8b6215;
+      font:800 13px Arial,sans-serif;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .sidebar{
+      display:grid;
+      gap:18px;
+    }
+
+    .side-card{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:22px;
+    }
+
+    .side-card h3{
+      margin:0 0 15px;
+      color:var(--navy);
+      font-size:19px;
+    }
+
+    .about-box p{
+      color:var(--muted);
+      font-size:14px;
+      margin:0;
+    }
+
+    .recent{
+      display:grid;
+      gap:12px;
+    }
+
+    .recent a{
+      padding-bottom:12px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .recent a:last-child{
+      border-bottom:0;
+      padding-bottom:0;
+    }
+
+    .recent strong{
+      display:block;
+      color:var(--navy);
+      line-height:1.3;
+      font-size:15px;
+    }
+
+    .recent span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font:11px Arial,sans-serif;
+    }
+
+    .newsletter{
+      background:var(--navy);
+      color:white;
+      border-radius:18px;
+      padding:23px;
+    }
+
+    .newsletter h3{color:white;margin-bottom:8px}
+    .newsletter p{
+      margin:0 0 15px;
+      color:#cdd8e5;
+      font-size:13px;
+    }
+
+    .newsletter input{
+      width:100%;
+      height:43px;
+      padding:0 12px;
+      border:0;
+      border-radius:10px;
+      margin-bottom:9px;
+      outline:none;
+    }
+
+    .newsletter button{
+      width:100%;
+      height:43px;
+      border:0;
+      border-radius:10px;
+      background:var(--gold);
+      color:#132641;
+      cursor:pointer;
+      font:800 13px Arial,sans-serif;
+    }
+
+    .timeline{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    .timeline-item{
+      position:relative;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:19px;
+    }
+
+    .timeline-year{
+      color:#9b6d12;
+      font:800 12px Arial,sans-serif;
+      letter-spacing:.08em;
+    }
+
+    .timeline-item h3{
+      color:var(--navy);
+      font-size:19px;
+      margin:8px 0 6px;
+    }
+
+    .timeline-item p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    footer{
+      background:#0b192d;
+      color:#b9c6d5;
+      padding:48px 0 25px;
+    }
+
+    .footer-grid{
+      display:grid;
+      grid-template-columns:1.4fr .8fr .8fr .9fr;
+      gap:30px;
+      padding-bottom:35px;
+      border-bottom:1px solid rgba(255,255,255,.1);
+    }
+
+    footer h3{
+      color:#fff;
+      margin:0 0 12px;
+      font-size:18px;
+    }
+
+    footer p,
+    footer a{
+      font:13px/1.7 Arial,sans-serif;
+      color:#b9c6d5;
+    }
+
+    footer a:hover{color:white}
+
+    .footer-bottom{
+      padding-top:20px;
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      font:12px Arial,sans-serif;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      background:rgba(7,18,34,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .modal.open{display:flex}
+
+    .modal-panel{
+      width:min(850px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:var(--paper);
+      border-radius:22px;
+      box-shadow:0 25px 80px rgba(0,0,0,.3);
+    }
+
+    .modal-head{
+      padding:25px 28px 18px;
+      border-bottom:1px solid var(--line);
+      position:sticky;
+      top:0;
+      background:rgba(255,253,248,.96);
+      backdrop-filter:blur(10px);
+      z-index:2;
+    }
+
+    .modal-head .meta{margin-bottom:8px}
+
+    .modal-head h2{
+      margin:0;
+      color:var(--navy);
+      font-size:34px;
+      line-height:1.12;
+    }
+
+    .close{
+      position:absolute;
+      top:18px;
+      right:18px;
+      width:38px;
+      height:38px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:white;
+      color:var(--navy);
+      cursor:pointer;
+      font:700 17px Arial,sans-serif;
+    }
+
+    .modal-content{
+      padding:28px;
+      color:#435063;
+      font-size:17px;
+    }
+
+    .modal-content h4{
+      color:var(--navy);
+      font-size:22px;
+      margin:25px 0 8px;
+    }
+
+    .modal-content p{margin:0 0 15px}
+
+
+    .modal-content img{
+      max-width:100%;
+      height:auto;
+      border-radius:12px;
+    }
+
+    .modal-content blockquote{
+      margin:18px 0;
+      padding:14px 18px;
+      border-left:4px solid var(--gold);
+      background:#f3eee3;
+      border-radius:0 10px 10px 0;
+    }
+
+    .modal-content code{
+      background:#eee9de;
+      padding:2px 5px;
+      border-radius:5px;
+      font-family:Consolas,monospace;
+      font-size:.9em;
+    }
+
+    .modal-content pre{
+      padding:16px;
+      overflow:auto;
+      background:#10233f;
+      color:#fff;
+      border-radius:12px;
+    }
+
+    .empty{
+      display:none;
+      grid-column:1/-1;
+      padding:45px 20px;
+      text-align:center;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      color:var(--muted);
+    }
+
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns:1fr}
+      .topics{grid-template-columns:repeat(3,1fr)}
+      .content-layout{grid-template-columns:1fr}
+      .sidebar{grid-template-columns:repeat(2,1fr)}
+      .timeline{grid-template-columns:repeat(2,1fr)}
+      .footer-grid{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media (max-width: 760px){
+      .topbar-inner span:last-child{display:none}
+      .nav{min-height:68px}
+      .nav-links{
+        display:none;
+        position:absolute;
+        left:18px;
+        right:18px;
+        top:72px;
+        padding:10px;
+        background:var(--paper);
+        border:1px solid var(--line);
+        border-radius:14px;
+        box-shadow:var(--shadow);
+        flex-direction:column;
+        align-items:stretch;
+        gap:0;
+      }
+      .nav-links.open{display:flex}
+      .nav-links a{padding:14px 12px;border-radius:9px}
+      .nav-links a:hover{background:#f3eee3}
+      .menu-btn{display:block}
+      .nav-actions .theme-btn{display:none}
+      .hero{padding:55px 0 42px}
+      .hero p{font-size:17px}
+      .topics{grid-template-columns:repeat(2,1fr)}
+      .posts{grid-template-columns:1fr}
+      .sidebar{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 520px){
+      .container{width:min(var(--max),calc(100% - 24px))}
+      .brand-title{font-size:17px}
+      .brand-subtitle{font-size:9px}
+      .brand-mark{width:38px;height:38px;flex-basis:38px;font-size:14px}
+      h1{font-size:42px}
+      .stats{grid-template-columns:1fr}
+      .topics{grid-template-columns:1fr}
+      .timeline{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr}
+      .section-heading{display:block}
+      .section-heading h2{margin-bottom:9px}
+      .hero-buttons .btn{width:100%}
+      .card-top{height:135px}
+      .modal-head h2{font-size:27px}
+      .modal-content{font-size:16px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <span>GRAND LEARNING PUBLICATION</span>
+      <span>Knowledge • History • Science • Civilization</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#home" aria-label="Grand Learning Publication home">
+        <div class="brand-mark">GLP</div>
+        <div class="brand-text">
+          <p class="brand-title">Grand Learning</p>
+          <p class="brand-subtitle">Publication &amp; Knowledge Archive</p>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a class="active" href="#home">Home</a>
+        <a href="#topics">Topics</a>
+        <a href="#blog">Blog</a>
+        <a href="#timeline">Timelines</a>
+        <a href="#about">About</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="icon-btn theme-btn" id="themeBtn" title="Toggle reading mode" aria-label="Toggle reading mode">◐</button>
+        <button class="icon-btn menu-btn" id="menuBtn" title="Open menu" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Independent Educational Publication</div>
+          <h1>Explore the story of knowledge.</h1>
+          <p>
+            Clear, chronological and visually organized learning resources covering
+            human history, archaeology, geology, astronomy, mathematics, science and civilization.
+          </p>
+          <div class="hero-buttons">
+            <a class="btn btn-primary" href="#blog">Explore the Blog</a>
+            <a class="btn btn-secondary" href="#timeline">View Timelines</a>
+          </div>
+        </div>
+
+        <aside class="hero-note">
+          <h2>Learn across time.</h2>
+          <p>
+            Move from the deep history of Earth and human evolution to ancient civilizations
+            and the development of scientific ideas.
+          </p>
+          <div class="stats">
+            <div class="stat"><strong>07</strong><span>Core Areas</span></div>
+            <div class="stat"><strong>∞</strong><span>Learning Paths</span></div>
+            <div class="stat"><strong>01</strong><span>Knowledge Hub</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="topics">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Explore</div>
+            <h2>Knowledge Topics</h2>
+          </div>
+          <p>
+            Browse the publication by subject and discover connected ideas across history,
+            science and human civilization.
+          </p>
+        </div>
+
+        <div class="topics">
+          <a class="topic" href="#blog" data-topic="History">
+            <div class="topic-icon">🏛️</div>
+            <h3>History</h3>
+            <p>Periods, civilizations, dates and historical development.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Archaeology">
+            <div class="topic-icon">🏺</div>
+            <h3>Archaeology</h3>
+            <p>Material culture, sites, tools, metals and evidence.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Human Evolution">
+            <div class="topic-icon">🧬</div>
+            <h3>Human Evolution</h3>
+            <p>Hominins, migration, adaptation and cultural change.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Geology">
+            <div class="topic-icon">🌍</div>
+            <h3>Geology</h3>
+            <p>Earth history, eons, eras, periods and epochs.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Astronomy">
+            <div class="topic-icon">🌌</div>
+            <h3>Astronomy</h3>
+            <p>Solar systems, planetary motion, seasons and orbits.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Mathematics">
+            <div class="topic-icon">∑</div>
+            <h3>Mathematics</h3>
+            <p>Numbers, fractions, geometry and mathematical history.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Civilization">
+            <div class="topic-icon">📜</div>
+            <h3>Civilization</h3>
+            <p>Writing, calendars, technology and social development.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Science">
+            <div class="topic-icon">🔬</div>
+            <h3>Science</h3>
+            <p>Ideas, discoveries, methods and the history of science.</p>
+          </a>
+          <a class="topic" href="#blog" data-topic="Timelines">
+            <div class="topic-icon">⏳</div>
+            <h3>Timelines</h3>
+            <p>Connected chronological views for faster learning.</p>
+          </a>
+          <a class="topic" href="#about">
+            <div class="topic-icon">✦</div>
+            <h3>Reference</h3>
+            <p>Definitions, comparisons and structured study material.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="blog-section" id="blog">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Latest Learning</div>
+            <h2>Featured Articles</h2>
+          </div>
+          <p>Use the search box or topic filters to find an article quickly.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-box">
+            <span>⌕</span>
+            <input id="searchInput" type="search" placeholder="Search articles..." aria-label="Search articles" />
+          </div>
+          <div class="filters" id="filters">
+            <button class="filter active" data-filter="All">All</button>
+            <button class="filter" data-filter="History">History</button>
+            <button class="filter" data-filter="Archaeology">Archaeology</button>
+            <button class="filter" data-filter="Human Evolution">Human Evolution</button>
+            <button class="filter" data-filter="Geology">Geology</button>
+            <button class="filter" data-filter="Astronomy">Astronomy</button>
+            <button class="filter" data-filter="Mathematics">Mathematics</button>
+          </div>
+        </div>
+
+        <div id="blogStatus" aria-live="polite" style="display:none;margin:-6px 0 18px;padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);font:12px Arial,sans-serif;"></div>
+
+        <div class="content-layout">
+          <div class="posts" id="posts"></div>
+
+          <aside class="sidebar">
+            <div class="side-card about-box" id="about">
+              <h3>About Grand Learning</h3>
+              <p>
+                Grand Learning Publication presents structured educational material in a
+                textbook-inspired style, helping readers connect facts, dates, ideas and discoveries.
+              </p>
+            </div>
+
+            <div class="side-card">
+              <h3>Recent Reading</h3>
+              <div class="recent">
+                <a href="#blog"><strong>Understanding the Geological Time Scale</strong><span>Geology · Reference</span></a>
+                <a href="#blog"><strong>How Heliocentrism Changed Astronomy</strong><span>Astronomy · Science</span></a>
+                <a href="#blog"><strong>From Stone to Metal</strong><span>Archaeology · Technology</span></a>
+                <a href="#blog"><strong>The Development of Writing</strong><span>Civilization · History</span></a>
+              </div>
+            </div>
+
+            <div class="newsletter">
+              <h3>Publication Notes</h3>
+              <p>Use this space for your newsletter, new-article announcements or publication updates.</p>
+              <form id="newsletterForm">
+                <input type="email" placeholder="Your email address" aria-label="Email address" required />
+                <button type="submit">Subscribe</button>
+              </form>
+              <div id="newsletterMessage" style="font:11px Arial,sans-serif;margin-top:9px;color:#d8e1ec;"></div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="timeline">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">Chronology</div>
+            <h2>Learning Through Time</h2>
+          </div>
+          <p>Build a connected picture of Earth, humanity, civilization and scientific thought.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-year">DEEP TIME</div>
+            <h3>Earth History</h3>
+            <p>Hadean, Archean, Proterozoic and Phanerozoic time scales.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">PREHISTORY</div>
+            <h3>Human Evolution</h3>
+            <p>Paleolithic, Mesolithic, Neolithic and the rise of settled communities.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">CIVILIZATION</div>
+            <h3>Early Societies</h3>
+            <p>Writing, agriculture, metallurgy, cities, states and long-distance exchange.</p>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-year">SCIENCE</div>
+            <h3>Scientific Ideas</h3>
+            <p>From ancient mathematical traditions to Copernicus, Kepler and modern science.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Grand Learning Publication</h3>
+          <p>
+            An educational knowledge hub for history, archaeology, human evolution,
+            geology, astronomy, mathematics and science.
+          </p>
+        </div>
+        <div>
+          <h3>Explore</h3>
+          <a href="#topics">Topics</a><br />
+          <a href="#blog">Blog</a><br />
+          <a href="#timeline">Timelines</a>
+        </div>
+        <div>
+          <h3>Publication</h3>
+          <a href="#about">About</a><br />
+          <a href="#blog">Articles</a><br />
+          <a href="#home">Home</a>
+        </div>
+        <div>
+          <h3>GitHub Pages</h3>
+          <p>Static GitHub Pages site with a dynamic blog reader connected to the repository.</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <span id="year"></span> Grand Learning Publication</span>
+        <span>Built for learning and reference</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal" id="articleModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <button class="close" id="closeModal" aria-label="Close article">×</button>
+        <div class="meta" id="modalMeta"></div>
+        <h2 id="modalTitle"></h2>
+      </div>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      GRAND LEARNING PUBLICATION — DYNAMIC GITHUB BLOG
+
+      Put your blog files inside:
+        /posts/
+
+      Supported:
+        /posts/*.md
+        /posts/*.markdown
+        /posts/*.html
+        /posts/ (including subfolders)/*.md
+        /posts/ (including subfolders)/*.html
+
+      Markdown front matter example:
+
+      ---
+      title: Understanding the Geological Time Scale
+      date: 2026-10-03
+      category: Geology
+      excerpt: A structured introduction to deep time.
+      image: /assets/images/geology.jpg
+      ---
+
+      The article content starts here.
+
+      You can change BLOG_ROOT to "_posts" if your repository already uses Jekyll's _posts folder.
+    */
+
+    const GITHUB_OWNER = "grand-learning-publication";
+    const GITHUB_REPO = "grand-learning-publication.github.io";
+    const GITHUB_BRANCH = "main";
+    const BLOG_ROOT = "posts";
+
+    let articles = [];
+    let activeFilter = "All";
+    let currentPath = "";
+
+    const categoryClasses = {
+      "History": "civilization",
+      "Archaeology": "copper",
+      "Human Evolution": "stone",
+      "Geology": "earth",
+      "Astronomy": "sky",
+      "Mathematics": "civilization",
+      "Civilization": "civilization",
+      "Science": "sky",
+      "Timelines": "earth"
+    };
+
+    function githubApi(path) {
+      return `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(GITHUB_BRANCH)}`;
+    }
+
+    function rawGithubUrl(path) {
+      return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${encodeURIComponent(GITHUB_BRANCH)}/${path
+        .split("/")
+        .map(encodeURIComponent)
+        .join("/")}`;
+    }
+
+    function escapeHtml(value = "") {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function stripMarkdown(value = "") {
+      return value
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        .replace(/[*_~`>#-]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function markdownToHtml(markdown, filePath) {
+      let source = markdown.replace(/\r\n/g, "\n");
+
+      // Remove YAML front matter from the displayed content.
+      if (source.startsWith("---")) {
+        const closeIndex = source.indexOf("\n---", 3);
+        if (closeIndex !== -1) {
+          source = source.slice(closeIndex + 4).trim();
+        }
+      }
+
+      // Resolve simple relative image links against the article file.
+      const folder = filePath.includes("/")
+        ? filePath.slice(0, filePath.lastIndexOf("/") + 1)
+        : "";
+
+      const imageUrl = src => {
+        if (/^(https?:|data:|\/)/i.test(src)) return src;
+        return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${folder}${src}`
+          .split(" ").join("%20");
+      };
+
+      const lines = source.split("\n");
+      let output = "";
+      let inList = false;
+      let inCode = false;
+      let codeBuffer = [];
+
+      function closeList() {
+        if (inList) {
+          output += "</ul>";
+          inList = false;
+        }
+      }
+
+      for (let line of lines) {
+        if (line.trim().startsWith("```")) {
+          closeList();
+          if (inCode) {
+            output += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`;
+            codeBuffer = [];
+            inCode = false;
+          } else {
+            inCode = true;
+          }
+          continue;
+        }
+
+        if (inCode) {
+          codeBuffer.push(line);
+          continue;
+        }
+
+        if (!line.trim()) {
+          closeList();
+          continue;
+        }
+
+        const trimmed = line.trim();
+
+        if (/^#{1,4}\s/.test(trimmed)) {
+          closeList();
+          const level = trimmed.match(/^#+/)[0].length;
+          const text = trimmed.replace(/^#+\s*/, "");
+          output += `<h4>${inlineMarkdown(text, imageUrl)}</h4>`;
+          continue;
+        }
+
+        if (/^[-*]\s+/.test(trimmed)) {
+          if (!inList) {
+            output += "<ul>";
+            inList = true;
+          }
+          output += `<li>${inlineMarkdown(trimmed.replace(/^[-*]\s+/, ""), imageUrl)}</li>`;
+          continue;
+        }
+
+        if (/^\d+\.\s+/.test(trimmed)) {
+          if (!inList) {
+            output += "<ol>";
+            inList = true;
+          }
+          output += `<li>${inlineMarkdown(trimmed.replace(/^\d+\.\s+/, ""), imageUrl)}</li>`;
+          continue;
+        }
+
+        closeList();
+
+        if (/^>\s?/.test(trimmed)) {
+          output += `<blockquote>${inlineMarkdown(trimmed.replace(/^>\s?/, ""), imageUrl)}</blockquote>`;
+          continue;
+        }
+
+        if (/^!\[.*\]\(.*\)$/.test(trimmed)) {
+          const match = trimmed.match(/^!\[(.*?)\]\((.*?)\)$/);
+          if (match) {
+            output += `<img src="${escapeHtml(imageUrl(match[2]))}" alt="${escapeHtml(match[1])}" loading="lazy" style="border-radius:14px;margin:18px 0;width:100%;">`;
+            continue;
+          }
+        }
+
+        output += `<p>${inlineMarkdown(trimmed, imageUrl)}</p>`;
+      }
+
+      closeList();
+      return output;
+    }
+
+    function inlineMarkdown(text, resolveImage) {
+      let out = escapeHtml(text);
+
+      // Restore common inline markdown after escaping.
+      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) =>
+        `<img src="${escapeHtml(resolveImage(src))}" alt="${escapeHtml(alt)}" loading="lazy" style="max-height:420px;border-radius:12px;margin:12px 0;">`
+      );
+      out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      out = out.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      out = out.replace(/__(.+?)__/g, "<strong>$1</strong>");
+      out = out.replace(/\*(.+?)\*/g, "<em>$1</em>");
+      out = out.replace(/_(.+?)_/g, "<em>$1</em>");
+      out = out.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+      return out;
+    }
+
+    function parseFrontMatter(source) {
+      const result = {};
+
+      if (!source.trimStart().startsWith("---")) {
+        return { data: result, body: source };
+      }
+
+      const normalized = source.replace(/\r\n/g, "\n");
+      const match = normalized.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+
+      if (!match) {
+        return { data: result, body: source };
+      }
+
+      match[1].split("\n").forEach(line => {
+        const colon = line.indexOf(":");
+        if (colon === -1) return;
+
+        const key = line.slice(0, colon).trim().toLowerCase();
+        let value = line.slice(colon + 1).trim();
+
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
+          value = value.slice(1, -1);
+        }
+
+        result[key] = value;
+      });
+
+      return { data: result, body: match[2] };
+    }
+
+    function parseHtmlArticle(source) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(source, "text/html");
+
+      const title =
+        doc.querySelector('meta[name="title"]')?.content ||
+        doc.querySelector("title")?.textContent ||
+        "";
+
+      const description =
+        doc.querySelector('meta[name="description"]')?.content ||
+        doc.querySelector('meta[property="og:description"]')?.content ||
+        "";
+
+      const category = doc.querySelector('meta[name="category"]')?.content || "";
+      const date = doc.querySelector('meta[name="date"]')?.content || "";
+
+      const article =
+        doc.querySelector("article") ||
+        doc.querySelector("main") ||
+        doc.body;
+
+      return {
+        title: title.trim(),
+        excerpt: description.trim(),
+        category: category.trim(),
+        date: date.trim(),
+        body: article?.innerHTML || source
+      };
+    }
+
+    function guessTitle(path) {
+      const file = path.split("/").pop().replace(/\.(md|markdown|html?)$/i, "");
+      return file
+        .replace(/^\d{4}-\d{2}-\d{2}-?/, "")
+        .replace(/[-_]+/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function guessCategory(path, data) {
+      if (data.category) return data.category;
+      const parts = path.split("/");
+      return parts.length > 2 ? parts[1].replace(/[-_]+/g, " ") : "General";
+    }
+
+    function formatDate(value, fallback = "") {
+      if (!value) return fallback || "Publication";
+
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return value;
+
+      return d.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function readingTime(text) {
+      const words = stripMarkdown(text).split(/\s+/).filter(Boolean).length;
+      return `${Math.max(1, Math.ceil(words / 180))} min read`;
+    }
+
+    function normalizeArticle(item, content, filePath) {
+      const ext = filePath.split(".").pop().toLowerCase();
+      const parsed = ext === "html" || ext === "htm"
+        ? parseHtmlArticle(content)
+        : (() => {
+            const parsedMd = parseFrontMatter(content);
+            return {
+              title: parsedMd.data.title || "",
+              excerpt: parsedMd.data.excerpt || parsedMd.data.description || "",
+              category: parsedMd.data.category || "",
+              date: parsedMd.data.date || "",
+              image: parsedMd.data.image || "",
+              body: markdownToHtml(content, filePath),
+              rawBody: parsedMd.body
+            };
+          })();
+
+      const title = parsed.title || guessTitle(filePath);
+      const excerpt = parsed.excerpt ||
+        stripMarkdown(parsed.rawBody || parsed.body || "").slice(0, 170) + "…";
+
+      const category = guessCategory(filePath, parsed);
+      const image = parsed.image || "";
+
+      return {
+        id: filePath,
+        path: filePath,
+        category,
+        className: categoryClasses[category] || "civilization",
+        number: "",
+        date: formatDate(parsed.date),
+        sortDate: parsed.date || "0000-00-00",
+        read: readingTime(parsed.rawBody || parsed.body || ""),
+        title,
+        excerpt,
+        image,
+        content: ext === "html" || ext === "htm"
+          ? parsed.body
+          : parsed.body
+      };
+    }
+
+    async function listBlogFiles(path = BLOG_ROOT) {
+      const response = await fetch(githubApi(path), {
+        headers: { "Accept": "application/vnd.github+json" }
+      });
+
+      if (!response.ok) {
+        throw new Error(`GitHub returned ${response.status} while reading ${path}`);
+      }
+
+      const entries = await response.json();
+      const files = [];
+
+      for (const entry of entries) {
+        if (entry.type === "dir") {
+          const nested = await listBlogFiles(entry.path);
+          files.push(...nested);
+        } else if (
+          entry.type === "file" &&
+          /\.(md|markdown|html?|HTML?)$/i.test(entry.name)
+        ) {
+          files.push(entry.path);
+        }
+      }
+
+      return files;
+    }
+
+    async function loadBlogArticles() {
+      const files = await listBlogFiles();
+      const loaded = [];
+
+      for (const filePath of files) {
+        try {
+          const response = await fetch(rawGithubUrl(filePath));
+          if (!response.ok) continue;
+
+          const content = await response.text();
+          loaded.push(normalizeArticle(
+            { path: filePath },
+            content,
+            filePath
+          ));
+        } catch (error) {
+          console.warn("Could not load article:", filePath, error);
+        }
+      }
+
+      loaded.sort((a, b) => String(b.sortDate).localeCompare(String(a.sortDate)));
+
+      loaded.forEach((article, index) => {
+        article.number = String(index + 1).padStart(2, "0");
+      });
+
+      articles = loaded;
+      return loaded;
+    }
+
+    function showBlogStatus(message, type = "normal") {
+      const existing = document.getElementById("blogStatus");
+      if (!existing) return;
+
+      existing.textContent = message;
+      existing.dataset.type = type;
+      existing.style.display = message ? "block" : "none";
+    }
+
+    const postsEl = document.getElementById("posts");
+    const searchInput = document.getElementById("searchInput");
+    const filterButtons = document.querySelectorAll(".filter");
+    const modal = document.getElementById("articleModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalMeta = document.getElementById("modalMeta");
+    const modalContent = document.getElementById("modalContent");
+
+    function renderPosts() {
+      const query = searchInput.value.trim().toLowerCase();
+
+      const filtered = articles.filter(article => {
+        const matchesFilter = activeFilter === "All" || article.category === activeFilter;
+        const searchable = [
+          article.title,
+          article.category,
+          article.excerpt,
+          article.content
+        ].join(" ").toLowerCase();
+
+        return matchesFilter && searchable.includes(query);
+      });
+
+      postsEl.innerHTML = "";
+
+      if (!articles.length) {
+        postsEl.innerHTML = `
+          <div class="empty" style="display:block">
+            <strong>No blog articles were found.</strong><br />
+            Upload Markdown or HTML articles into <code>/posts/</code> in your GitHub repository.
+          </div>
+        `;
+        return;
+      }
+
+      if (!filtered.length) {
+        postsEl.innerHTML = `
+          <div class="empty" style="display:block">
+            <strong>No articles found.</strong><br />
+            Try another search term or choose a different topic.
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(article => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const visual = article.image
+          ? `<div class="card-top" style="background-image:linear-gradient(135deg,rgba(16,35,63,.72),rgba(16,35,63,.25)),url('${escapeHtml(article.image)}');background-size:cover;background-position:center;">`
+          : `<div class="card-top ${article.className}">`;
+
+        card.innerHTML = `
+          ${visual}
+            <span class="badge">${escapeHtml(article.category)}</span>
+            <span class="number">${escapeHtml(article.number)}</span>
+          </div>
+          <div class="card-body">
+            <div class="meta">
+              <span>${escapeHtml(article.date)}</span><span>•</span><span>${escapeHtml(article.read)}</span>
+            </div>
+            <h3>${escapeHtml(article.title)}</h3>
+            <p>${escapeHtml(article.excerpt)}</p>
+            <button class="read" data-id="${encodeURIComponent(article.id)}" style="border:0;background:none;padding:0;cursor:pointer;">
+              Read article <span>↗</span>
+            </button>
+          </div>
+        `;
+
+        postsEl.appendChild(card);
+      });
+
+      postsEl.querySelectorAll(".read").forEach(btn => {
+        btn.addEventListener("click", () => openArticle(decodeURIComponent(btn.dataset.id)));
+      });
+    }
+
+    function openArticle(id) {
+      const article = articles.find(item => item.id === id);
+      if (!article) return;
+
+      modalMeta.innerHTML = `<span>${escapeHtml(article.category)}</span><span>•</span><span>${escapeHtml(article.date)}</span><span>•</span><span>${escapeHtml(article.read)}</span>`;
+      modalTitle.textContent = article.title;
+      modalContent.innerHTML = article.content;
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeArticle() {
+      modal.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("closeModal").addEventListener("click", closeArticle);
+
+    modal.addEventListener("click", event => {
+      if (event.target === modal) closeArticle();
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeArticle();
+    });
+
+    searchInput.addEventListener("input", renderPosts);
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filterButtons.forEach(b => b.classList.toggle("active", b === button));
+        renderPosts();
+      });
+    });
+
+    document.querySelectorAll("[data-topic]").forEach(topic => {
+      topic.addEventListener("click", () => {
+        activeFilter = topic.dataset.topic;
+        filterButtons.forEach(b => b.classList.toggle("active", b.dataset.filter === activeFilter));
+        renderPosts();
+      });
+    });
+
+    document.getElementById("menuBtn").addEventListener("click", () => {
+      document.getElementById("navLinks").classList.toggle("open");
+    });
+
+    document.querySelectorAll(".nav-links a").forEach(link => {
+      link.addEventListener("click", () => {
+        document.getElementById("navLinks").classList.remove("open");
+        document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
+        link.classList.add("active");
+      });
+    });
+
+    document.getElementById("themeBtn").addEventListener("click", () => {
+      document.body.classList.toggle("reading-mode");
+      if (document.body.classList.contains("reading-mode")) {
+        document.body.style.background = "#ece7dc";
+      } else {
+        document.body.style.background = "";
+      }
+    });
+
+    document.getElementById("newsletterForm").addEventListener("submit", event => {
+      event.preventDefault();
+      document.getElementById("newsletterMessage").textContent =
+        "Demo subscription form. Connect this form to your preferred mailing service.";
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    async function initDynamicBlog() {
+      showBlogStatus("Loading articles from GitHub…");
+
+      try {
+        await loadBlogArticles();
+        showBlogStatus(
+          articles.length
+            ? `${articles.length} article${articles.length === 1 ? "" : "s"} loaded from /${BLOG_ROOT}/`
+            : ""
+        );
+
+        renderPosts();
+      } catch (error) {
+        console.error(error);
+        articles = [];
+        renderPosts();
+        showBlogStatus(
+          `The blog could not be loaded from GitHub. Check that /${BLOG_ROOT}/ exists and that the repository is public.`,
+          "error"
+        );
+      }
+    }
+
+    initDynamicBlog();
+  </script>
+</body>
+</html>
