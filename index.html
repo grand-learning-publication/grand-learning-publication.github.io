@@ -317,6 +317,13 @@
       transition:.2s ease;
     }
 
+
+    .topic.selected{
+      border-color:#d6a84b;
+      box-shadow:0 8px 22px rgba(16,35,63,.12);
+      transform:translateY(-3px);
+    }
+
     .topic:hover{
       transform:translateY(-3px);
       box-shadow:var(--shadow);
@@ -332,6 +339,16 @@
       margin:0 0 4px;
       color:var(--navy);
       font-size:18px;
+    }
+
+
+    .topic-count{
+      display:inline-block;
+      margin-top:8px;
+      color:#9b6d12;
+      font:700 10px/1 Arial,sans-serif;
+      letter-spacing:.04em;
+      text-transform:uppercase;
     }
 
     .topic p{
@@ -877,47 +894,47 @@
         <div class="topics">
           <a class="topic" href="#blog" data-topic="History">
             <div class="topic-icon">🏛️</div>
-            <h3>History</h3>
+            <h3>History</h3><span class="topic-count" data-topic-count="History">0 projects</span>
             <p>Periods, civilizations, dates and historical development.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Archaeology">
             <div class="topic-icon">🏺</div>
-            <h3>Archaeology</h3>
+            <h3>Archaeology</h3><span class="topic-count" data-topic-count="Archaeology">0 projects</span>
             <p>Material culture, sites, tools, metals and evidence.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Human Evolution">
             <div class="topic-icon">🧬</div>
-            <h3>Human Evolution</h3>
+            <h3>Human Evolution</h3><span class="topic-count" data-topic-count="Human Evolution">0 projects</span>
             <p>Hominins, migration, adaptation and cultural change.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Geology">
             <div class="topic-icon">🌍</div>
-            <h3>Geology</h3>
+            <h3>Geology</h3><span class="topic-count" data-topic-count="Geology">0 projects</span>
             <p>Earth history, eons, eras, periods and epochs.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Astronomy">
             <div class="topic-icon">🌌</div>
-            <h3>Astronomy</h3>
+            <h3>Astronomy</h3><span class="topic-count" data-topic-count="Astronomy">0 projects</span>
             <p>Solar systems, planetary motion, seasons and orbits.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Mathematics">
             <div class="topic-icon">∑</div>
-            <h3>Mathematics</h3>
+            <h3>Mathematics</h3><span class="topic-count" data-topic-count="Mathematics">0 projects</span>
             <p>Numbers, fractions, geometry and mathematical history.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Civilization">
             <div class="topic-icon">📜</div>
-            <h3>Civilization</h3>
+            <h3>Civilization</h3><span class="topic-count" data-topic-count="Civilization">0 projects</span>
             <p>Writing, calendars, technology and social development.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Science">
             <div class="topic-icon">🔬</div>
-            <h3>Science</h3>
+            <h3>Science</h3><span class="topic-count" data-topic-count="Science">0 projects</span>
             <p>Ideas, discoveries, methods and the history of science.</p>
           </a>
           <a class="topic" href="#blog" data-topic="Timelines">
             <div class="topic-icon">⏳</div>
-            <h3>Timelines</h3>
+            <h3>Timelines</h3><span class="topic-count" data-topic-count="Timelines">0 projects</span>
             <p>Connected chronological views for faster learning.</p>
           </a>
           <a class="topic" href="#about">
@@ -994,7 +1011,7 @@
           </div>
           <div class="timeline-item">
             <div class="timeline-year">PREHISTORY</div>
-            <h3>Human Evolution</h3>
+            <h3>Human Evolution</h3><span class="topic-count" data-topic-count="Human Evolution">0 projects</span>
             <p>Paleolithic, Mesolithic, Neolithic and the rise of settled communities.</p>
           </div>
           <div class="timeline-item">
@@ -1335,10 +1352,14 @@
       }
 
       if (!filtered.length) {
+        const selectedMessage = activeFilter !== "All"
+          ? `No published GitHub project is currently classified as <strong>${escapeHtml(activeFilter)}</strong>.`
+          : "No matching projects were found.";
+
         postsEl.innerHTML = `
           <div class="empty" style="display:block">
-            <strong>No articles or projects found.</strong><br />
-            Try another search term or topic.
+            ${selectedMessage}<br />
+            Add a matching project repository and it will appear here automatically.
           </div>
         `;
         return;
@@ -1446,10 +1467,19 @@
 
     searchInput.addEventListener("input", renderPosts);
 
+    function updateTopicCounts() {
+      document.querySelectorAll("[data-topic-count]").forEach(el => {
+        const category = el.dataset.topicCount;
+        const count = articles.filter(article => article.category === category).length;
+        el.textContent = `${count} project${count === 1 ? "" : "s"}`;
+      });
+    }
+
     function renderFilters() {
-      const categories = [...new Set(
-        articles.map(article => article.category).filter(Boolean)
-      )].sort((a, b) => a.localeCompare(b));
+      const categories = [...new Set([
+        ...articles.map(article => article.category).filter(Boolean),
+        ...(activeFilter !== "All" ? [activeFilter] : [])
+      ])].sort((a, b) => a.localeCompare(b));
 
       filtersEl.innerHTML =
         `<button class="filter ${activeFilter === "All" ? "active" : ""}" data-filter="All">All</button>`;
@@ -1472,11 +1502,26 @@
     }
 
     document.querySelectorAll("[data-topic]").forEach(topic => {
-      topic.addEventListener("click", () => {
+      topic.addEventListener("click", event => {
+        event.preventDefault();
+
         activeFilter = topic.dataset.topic;
-        if (!articles.some(article => article.category === activeFilter)) {
-          activeFilter = "All";
-        }
+
+        document.querySelectorAll("[data-topic]").forEach(t => {
+          t.classList.toggle("selected", t === topic);
+        });
+
+        // Scroll to the dynamic Blog section first.
+        document.getElementById("blog").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+        // Use the selected Knowledge Topic even when zero projects
+        // currently belong to that category. This lets the empty-state
+        // message explain what is missing instead of silently switching to All.
+        updateTopicCounts();
+        document.querySelectorAll("[data-topic]").forEach(t => t.classList.remove("selected"));
         renderFilters();
         renderPosts();
       });
